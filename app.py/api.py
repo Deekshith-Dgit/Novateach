@@ -71,7 +71,14 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
-
+@app.get("/")
+def root():
+    return {
+        "status": "ok",
+        "service": "Novateach API",
+        "docs": "/docs",
+        "health": "/api/health",
+    }
 # ============================================================
 # CORS
 # ============================================================

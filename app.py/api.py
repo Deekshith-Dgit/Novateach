@@ -1,3 +1,4 @@
+import os
 import traceback
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
@@ -71,6 +72,7 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
 @app.get("/")
 def root():
     return {
@@ -83,12 +85,22 @@ def root():
 # CORS
 # ============================================================
 
+frontend_origin = os.getenv(
+    "FRONTEND_ORIGIN",
+    "",
+).strip().rstrip("/")
+
+allowed_origins = {
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+}
+
+if frontend_origin:
+    allowed_origins.add(frontend_origin)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=sorted(allowed_origins),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
